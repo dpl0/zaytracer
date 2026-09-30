@@ -1,3 +1,4 @@
 .zig-cache/*
 *.a
 zig-out
+*.ppm

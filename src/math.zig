@@ -7,7 +7,7 @@
 const std = @import("std");
 
 /// Minimum value for differentiating two f32 values.
-const epsilon: f32 = 1e-5;
+pub const epsilon: f32 = 1e-5;
 
 /// Point type
 pub const P = struct {
@@ -172,8 +172,8 @@ pub const C = struct {
         try std.testing.expectApproxEqAbs(expected.b, actual.b, epsilon);
     }
 
-    pub fn init(x: f32, y: f32, z: f32) Self {
-        return .{ .r = x, .g = y, .b = z };
+    pub fn init(r: f32, g: f32, b: f32) Self {
+        return .{ .r = r, .g = g, .b = b };
     }
 
     pub fn add(self: Self, other: Self) Self {
@@ -213,6 +213,15 @@ pub const C = struct {
             .r = self.r * other.r,
             .g = self.g * other.g,
             .b = self.b * other.b,
+        };
+    }
+
+    pub fn toBytes(self: Self) [3]u8 {
+        const color_scaling = 255;
+        return .{
+            @trunc(@round(color_scaling * std.math.clamp(self.r, 0.0, 1.0))),
+            @trunc(@round(color_scaling * std.math.clamp(self.g, 0.0, 1.0))),
+            @trunc(@round(color_scaling * std.math.clamp(self.b, 0.0, 1.0))),
         };
     }
 };
@@ -476,3 +485,30 @@ test "multiplying colors" {
 //     And n ← vector(√2/2, √2/2, 0)
 //   When r ← reflect(v, n)
 //   Then r = vector(1, 0, 0)
+
+// Scenario: Converting colors to bytes
+//   Given c1 ← color(1.5, 0, 0)
+//     And c2 ← color(0, 0.5, 0)
+//     And c3 ← color(-0.5, 0, 1)
+//   Then toBytes(c1) = (255, 0, 0)
+//     And toBytes(c2) = (0, 128, 0)
+//     And toBytes(c3) = (0, 0, 255)
+test "converting colors to bytes scales to 0-255 and clamps" {
+    try std.testing.expectEqual([3]u8{ 255, 0, 0 }, C.init(1.5, 0, 0).toBytes());
+    try std.testing.expectEqual([3]u8{ 0, 128, 0 }, C.init(0, 0.5, 0).toBytes());
+    try std.testing.expectEqual([3]u8{ 0, 0, 255 }, C.init(-0.5, 0, 1).toBytes());
+}
+
+// Scenario: Rounding and endpoints when converting colors to bytes
+//   Given c1 ← color(0, 0, 0)
+//     And c2 ← color(1, 1, 1)
+//     And c3 ← color(0.5, 0.3, 2.0)
+//   Then toBytes(c1) = (0, 0, 0)
+//     And toBytes(c2) = (255, 255, 255)
+//     And toBytes(c3) = (128, 77, 255)
+test "converting colors to bytes rounds half away from zero" {
+    try std.testing.expectEqual([3]u8{ 0, 0, 0 }, C.init(0, 0, 0).toBytes());
+    try std.testing.expectEqual([3]u8{ 255, 255, 255 }, C.init(1, 1, 1).toBytes());
+    // 0.5*255 = 127.5 -> 128; 0.3*255 = 76.5 -> 77; >1 clamps to 255
+    try std.testing.expectEqual([3]u8{ 128, 77, 255 }, C.init(0.5, 0.3, 2.0).toBytes());
+}
