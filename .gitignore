@@ -1,4 +1,3 @@
 .zig-cache/*
 *.a
 zig-out
-raytracer_challenge_code/*
