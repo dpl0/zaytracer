@@ -1,8 +1,8 @@
-///! All math related stuff for the raytracer. It's going to be a lot.
-///!
-///! # Vectorial structures
-///! This includes vector and point types. These are the operation tables regarding types:
-///!
+///! All vector related stuff for the raytracer.
+///! Includes:
+///!   * `P`, a point type.
+///!   * `V`, a vector type.
+///!   * `C`, a color type.
 ///!
 const std = @import("std");
 
@@ -10,6 +10,7 @@ const std = @import("std");
 pub const epsilon: f32 = 1e-5;
 
 /// Point type
+/// `w` would be 1 if we used a 4 scalar tuple
 pub const P = struct {
     const Self = @This();
     x: f32,
@@ -69,6 +70,7 @@ pub const P = struct {
 };
 
 /// Vector type
+/// `w` would be 0 if we used a 4 scalar tuple
 pub const V = struct {
     const Self = @This();
     x: f32,
