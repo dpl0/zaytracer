@@ -4,6 +4,7 @@ const builtin = @import("builtin");
 const zaytracer = @import("zaytracer");
 const Canvas = zaytracer.canvas.Canvas;
 const C = zaytracer.math.C;
+const Float = zaytracer.math.Float;
 
 pub fn saveCanvasToFile(path: []const u8, canvas: Canvas, io: std.Io) !void {
     const cwd: std.Io.Dir = std.Io.Dir.cwd();
@@ -16,26 +17,26 @@ pub fn saveCanvasToFile(path: []const u8, canvas: Canvas, io: std.Io) !void {
     try writer.flush();
 }
 
-fn lerp(a: f32, b: f32, t: f32) f32 {
+fn lerp(a: Float, b: Float, t: Float) Float {
     return a + (b - a) * t;
 }
 
-fn mix(a: C, b: C, t: f32) C {
+fn mix(a: C, b: C, t: Float) C {
     return C.init(lerp(a.r, b.r, t), lerp(a.g, b.g, t), lerp(a.b, b.b, t));
 }
 
-fn smoothstep(t: f32) f32 {
+fn smoothstep(t: Float) Float {
     return t * t * (3 - 2 * t);
 }
 
 pub fn fillGradient(canvas: Canvas, tl: C, tr: C, bl: C, br: C) void {
-    const w: f32 = @floatFromInt(@max(canvas.width - 1, 1));
-    const h: f32 = @floatFromInt(@max(canvas.height - 1, 1));
+    const w: Float = @floatFromInt(@max(canvas.width - 1, 1));
+    const h: Float = @floatFromInt(@max(canvas.height - 1, 1));
 
     for (0..canvas.height) |y| {
-        const v = smoothstep(@as(f32, @floatFromInt(y)) / h);
+        const v = smoothstep(@as(Float, @floatFromInt(y)) / h);
         for (0..canvas.width) |x| {
-            const u = smoothstep(@as(f32, @floatFromInt(x)) / w);
+            const u = smoothstep(@as(Float, @floatFromInt(x)) / w);
             const top = mix(tl, tr, u);
             const bottom = mix(bl, br, u);
             canvas.write(x, y, mix(top, bottom, v));

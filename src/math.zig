@@ -6,16 +6,19 @@
 ///!
 const std = @import("std");
 
+/// Type used throughout the whole system.
+pub const Float = f32;
+
 /// Minimum value for differentiating two f32 values.
-pub const epsilon: f32 = 1e-5;
+pub const epsilon: Float = 1e-5;
 
 /// Point type
 /// `w` would be 1 if we used a 4 scalar tuple
 pub const P = struct {
     const Self = @This();
-    x: f32,
-    y: f32,
-    z: f32,
+    x: Float,
+    y: Float,
+    z: Float,
 
     /// Useful for testing similarity with other vectors.
     pub fn expectApproxEq(expected: Self, actual: Self) !void {
@@ -24,7 +27,7 @@ pub const P = struct {
         try std.testing.expectApproxEqAbs(expected.z, actual.z, epsilon);
     }
 
-    pub fn init(x: f32, y: f32, z: f32) Self {
+    pub fn init(x: Float, y: Float, z: Float) Self {
         return .{ .x = x, .y = y, .z = z };
     }
 
@@ -52,7 +55,7 @@ pub const P = struct {
         };
     }
 
-    pub fn mul(self: Self, scalar: f32) Self {
+    pub fn mul(self: Self, scalar: Float) Self {
         return .{
             .x = self.x * scalar,
             .y = self.y * scalar,
@@ -60,7 +63,7 @@ pub const P = struct {
         };
     }
 
-    pub fn div(self: Self, scalar: f32) Self {
+    pub fn div(self: Self, scalar: Float) Self {
         return .{
             .x = self.x / scalar,
             .y = self.y / scalar,
@@ -73,9 +76,9 @@ pub const P = struct {
 /// `w` would be 0 if we used a 4 scalar tuple
 pub const V = struct {
     const Self = @This();
-    x: f32,
-    y: f32,
-    z: f32,
+    x: Float,
+    y: Float,
+    z: Float,
 
     /// Useful for testing similarity with other vectors.
     pub fn expectApproxEq(expected: Self, actual: Self) !void {
@@ -84,7 +87,7 @@ pub const V = struct {
         try std.testing.expectApproxEqAbs(expected.z, actual.z, epsilon);
     }
 
-    pub fn init(x: f32, y: f32, z: f32) Self {
+    pub fn init(x: Float, y: Float, z: Float) Self {
         return .{ .x = x, .y = y, .z = z };
     }
 
@@ -112,7 +115,7 @@ pub const V = struct {
         };
     }
 
-    pub fn mul(self: Self, scalar: f32) Self {
+    pub fn mul(self: Self, scalar: Float) Self {
         return .{
             .x = self.x * scalar,
             .y = self.y * scalar,
@@ -120,7 +123,7 @@ pub const V = struct {
         };
     }
 
-    pub fn div(self: Self, scalar: f32) Self {
+    pub fn div(self: Self, scalar: Float) Self {
         return .{
             .x = self.x / scalar,
             .y = self.y / scalar,
@@ -132,7 +135,7 @@ pub const V = struct {
         return .{ .x = -self.x, .y = -self.y, .z = -self.z };
     }
 
-    pub fn magnitude(self: Self) f32 {
+    pub fn magnitude(self: Self) Float {
         return @sqrt(self.x * self.x + self.y * self.y + self.z * self.z);
     }
 
@@ -145,7 +148,7 @@ pub const V = struct {
         };
     }
 
-    pub fn dot(self: Self, other: Self) f32 {
+    pub fn dot(self: Self, other: Self) Float {
         return self.x * other.x +
             self.y * other.y +
             self.z * other.z;
@@ -163,9 +166,9 @@ pub const V = struct {
 /// Color type
 pub const C = struct {
     const Self = @This();
-    r: f32,
-    g: f32,
-    b: f32,
+    r: Float,
+    g: Float,
+    b: Float,
 
     /// Useful for testing similarity with other vectors.
     pub fn expectApproxEq(expected: Self, actual: Self) !void {
@@ -174,7 +177,7 @@ pub const C = struct {
         try std.testing.expectApproxEqAbs(expected.b, actual.b, epsilon);
     }
 
-    pub fn init(r: f32, g: f32, b: f32) Self {
+    pub fn init(r: Float, g: Float, b: Float) Self {
         return .{ .r = r, .g = g, .b = b };
     }
 
@@ -194,7 +197,7 @@ pub const C = struct {
         };
     }
 
-    pub fn mul(self: Self, scalar: f32) Self {
+    pub fn mul(self: Self, scalar: Float) Self {
         return .{
             .r = self.r * scalar,
             .g = self.g * scalar,
@@ -202,7 +205,7 @@ pub const C = struct {
         };
     }
 
-    pub fn div(self: Self, scalar: f32) Self {
+    pub fn div(self: Self, scalar: Float) Self {
         return .{
             .r = self.r / scalar,
             .g = self.g / scalar,
